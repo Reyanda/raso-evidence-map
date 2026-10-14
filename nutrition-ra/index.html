@@ -10,7 +10,7 @@
     ></script>
     <script type="module">
       import { runApp } from "./shinylive/shinylive.js";
-      const response = await fetch("./app.json?v=4768601dc67b", {cache:"no-store"});
+      const response = await fetch("./app.json?v=677bd4df39be", {cache:"no-store"});
       runApp(document.getElementById("root"), "viewer", {startFiles:await response.json()}, "r");
     </script>
     <link rel="stylesheet" href="./shinylive/style-resets.css" />
