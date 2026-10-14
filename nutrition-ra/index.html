@@ -10,7 +10,7 @@
     ></script>
     <script type="module">
       import { runApp } from "./shinylive/shinylive.js";
-      const response = await fetch("./app.json?v=afa5e537f837", {cache:"no-store"});
+      const response = await fetch("./app.json?v=407a1daa4a5a", {cache:"no-store"});
       if (!response.ok) throw new Error("Application source could not load");
       runApp(document.getElementById("root"), "viewer", {startFiles:await response.json()}, "r");
     </script>
