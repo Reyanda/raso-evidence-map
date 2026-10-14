@@ -27,3 +27,13 @@ async function viewData(name,page=0){
  panel.append(table);for(const id of ['rw-plots','ide-files','ide-packages','ide-help'])$(id).hidden=true;panel.hidden=false;
  const tabs=document.querySelector('[data-lower="plots"]').parentElement;let button=$('ide-data-tab');if(!button){button=document.createElement('button');button.id='ide-data-tab';button.textContent='Data';button.onclick=()=>{for(const id of ['rw-plots','ide-files','ide-packages','ide-help'])$(id).hidden=true;panel.hidden=false};tabs.append(button);for(const b of tabs.querySelectorAll('[data-lower]'))b.addEventListener('click',()=>panel.hidden=true)}
 }
+
+function restorePaneLayout(){const grid=document.querySelector('.ide-grid');if(!grid||grid.dataset.layoutBound)return;grid.dataset.layoutBound='true';
+ for(const [selector,axis,property,key] of [['.split-x','x','gridTemplateColumns','nutrition:columns'],['.split-y','y','gridTemplateRows','nutrition:rows']]){
+  const h=document.querySelector(selector),apply=ratio=>{ratio=Math.max(.25,Math.min(.75,ratio));grid.style[property]=`${ratio}fr 8px ${1-ratio}fr`;localStorage.setItem(key,String(ratio));h.setAttribute('aria-valuenow',String(Math.round(ratio*100)))};
+  const saved=Number(localStorage.getItem(key));if(saved>=.25&&saved<=.75)apply(saved);h.tabIndex=0;h.setAttribute('aria-valuemin','25');h.setAttribute('aria-valuemax','75');h.setAttribute('aria-valuenow',String(Math.round((saved||.5)*100)));
+  h.addEventListener('pointerup',()=>{const b=grid.getBoundingClientRect(),rect=h.getBoundingClientRect();apply(axis==='x'?(rect.left-b.left)/b.width:(rect.top-b.top)/b.height)});
+  h.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home'].includes(e.key)){e.preventDefault();const current=Number(localStorage.getItem(key))||.5;apply(e.key==='Home'?.5:current+(['ArrowLeft','ArrowUp'].includes(e.key)?-.025:.025))}})
+ }
+}
+new MutationObserver(restorePaneLayout).observe(document.body,{childList:true,subtree:true});restorePaneLayout();
