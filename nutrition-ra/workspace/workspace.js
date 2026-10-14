@@ -37,3 +37,12 @@ function restorePaneLayout(){const grid=document.querySelector('.ide-grid');if(!
  }
 }
 new MutationObserver(restorePaneLayout).observe(document.body,{childList:true,subtree:true});restorePaneLayout();
+
+function syncMenuPayload(){const payload=$('rw-menu-data');if(!payload||!payload.textContent.trim())return;const csv=payload.textContent;if(localStorage.getItem('nutrition:menu-csv')!==csv)localStorage.setItem('nutrition:menu-csv',csv)}
+new MutationObserver(syncMenuPayload).observe(document.body,{childList:true,subtree:true,characterData:true});syncMenuPayload();
+window.addEventListener('storage',e=>{if(e.key==='nutrition:menu-csv'&&$('rw-menu-data'))$('rw-menu-data').textContent=e.newValue||''});
+
+function bindSessionFiles(){const save=$('rw-save-session'),load=$('rw-load-session');if(!save||save.dataset.bound)return;save.dataset.bound='true';save.onclick=async()=>{try{const r=await ready();await r.evalRVoid('save.image("/home/web_user/workspace.RData")');download('workspace.RData',await r.FS.readFile('/home/web_user/workspace.RData'),'application/octet-stream')}catch(e){$('rw-output').textContent=e.message}};
+ load.onchange=async()=>{const file=load.files[0];if(!file)return;try{const r=await ready();await r.FS.writeFile('/home/web_user/import.RData',new Uint8Array(await file.arrayBuffer()));await r.evalRVoid('load("/home/web_user/import.RData",envir=.GlobalEnv)');await refreshIDE();$('rw-output').textContent='Workspace loaded.'}catch(e){$('rw-output').textContent=e.message}}
+}
+new MutationObserver(bindSessionFiles).observe(document.body,{childList:true,subtree:true});bindSessionFiles();
