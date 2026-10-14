@@ -9,12 +9,10 @@
       type="module"
     ></script>
     <script type="module">
-      import { runExportedApp } from "./shinylive/shinylive.js";
-      runExportedApp({
-        id: "root",
-        appEngine: "r",
-        relPath: "",
-      });
+      import { runApp } from "./shinylive/shinylive.js";
+      const response = await fetch("./app.json?v=afa5e537f837", {cache:"no-store"});
+      if (!response.ok) throw new Error("Application source could not load");
+      runApp(document.getElementById("root"), "viewer", {startFiles:await response.json()}, "r");
     </script>
     <link rel="stylesheet" href="./shinylive/style-resets.css" />
     <link rel="stylesheet" href="./shinylive/shinylive.css" />
